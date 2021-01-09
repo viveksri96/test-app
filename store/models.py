@@ -14,8 +14,8 @@ class Store(models.Model):
 class Product(models.Model):
     name = models.TextField(null=False, blank=False)
     description = models.TextField(null=False, blank=False)
-    mrp = models.DecimalField(decimal_places=2, null=False, blank=False)
-    sale_price = models.DecimalField(decimal_places=2, null=False, blank=False)
+    mrp = models.DecimalField(max_digit=10, decimal_places=2, null=False, blank=False)
+    sale_price = models.DecimalField(max_digit=10, decimal_places=2, null=False, blank=False)
     image = models.ImageField(upload_to="uploads/")
 
 class Category(models.Model):
