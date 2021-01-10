@@ -1,1 +1,1 @@
-web: gunicorn adpitchersAPI.wsgi
+web: gunicorn dukanTestApp.wsgi
