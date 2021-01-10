@@ -60,7 +60,7 @@ class CartItemView(APIView):
 
 class CartCheckout(APIView):
     """
-       Checkout endpoint. User should be authenticated or pass a phone_number and otp to create a new user. 
+       Checkout endpoint. User should be authenticated or pass a phone_number and otp to create a new user.
     """
     authentication_classes = [TokenAuthentication]
 
@@ -76,6 +76,15 @@ class CartCheckout(APIView):
             else:
                 return Response('No user found please enter your mobile number and otp', status=status.HTTP_400_BAD_REQUEST)
 
+        # Check and save customer address
+        if(not customer.address):
+            address = request.data.get('address')
+            if(address):
+                return Response({"error": "Invalid adress"}, status=status.HTTP_400_BAD_REQUEST)
+            customer.address = address
+            customer.save()
+
+        # Copies the cart data and creates a new Order and cart is deleted in the end.
         cart = Cart.objects.get(id=id)
         order = Order.objects.create(customer=customer, total=cart.total)
 
