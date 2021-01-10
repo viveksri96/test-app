@@ -1,3 +1,6 @@
+from decouple import config
+import django_heroku
+
 """
 Django settings for dukanTestApp project.
 
@@ -137,3 +140,6 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'accounts.User'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'
+
+# should be the last line of this file
+django_heroku.settings(locals())
