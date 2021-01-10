@@ -6,12 +6,25 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import permissions
-
+# from rest_framework.permissions import IsAuthenticated
+#
 # Create your views here.
 
 
+class IsAuthenticated(permissions.BasePermission):
+    SAFE_METHODS = ['POST']
+
+    def has_permission(self, request, view):
+        if request.method in self.SAFE_METHODS:
+            return request.user.is_authenticated
+
+
 class StoreView(APIView):
+    """
+        Creates a store and displays it's data
+    """
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id):
         store = Store.objects.get(id=id)
@@ -23,7 +36,6 @@ class StoreView(APIView):
         )
 
     def post(self, request):
-
         name = request.data.get('name')
         address = request.data.get('address')
         user = request.user
@@ -41,6 +53,7 @@ class StoreView(APIView):
 
 class ProductView(APIView):
     authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id):
         store = Store.objects.get(id=id)
@@ -52,11 +65,15 @@ class ProductView(APIView):
                 if(not group_by.get(i.category.name)):
                     group_by[i.category.name] = [ProductSerializer(i).data]
                 group_by[i.category.name].append(ProductSerializer(i).data)
-        print(group_by)
         return Response(group_by, status=status.HTTP_200_OK)
 
     def post(self, request, id):
         request.data['store'] = id
+
+        store = Store.objects.get(id=id)
+        if(not store.owner == request.user):
+            return Response("Invalid credentials", status=status.HTTP_401_UNAUTHORIZED)
+
         category, is_created = Category.objects.get_or_create(
             name=request.data.get('category'))
         request.data['category'] = category.id

@@ -20,6 +20,7 @@ from django.conf import settings
 from accounts.views import Login
 from accounts.admin import my_admin_site
 from store.views import StoreView, ProductView
+from cart.views import CartView, CartItemView, CartCheckout
 
 urlpatterns = [
     path('v1/admin/', my_admin_site.urls),
@@ -27,4 +28,7 @@ urlpatterns = [
     path('v1/store/<int:id>/', StoreView.as_view()),
     path('v1/store/', StoreView.as_view()),
     path('v1/store/<int:id>/product/', ProductView.as_view()),
+    path('v1/cart/', CartView.as_view()),
+    path('v1/cart/<int:id>/', CartItemView.as_view()),
+    path('v1/cart/<int:id>/checkout/', CartCheckout.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

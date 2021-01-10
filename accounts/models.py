@@ -38,4 +38,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
 
-
+class Customer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    address = address = models.TextField(null=False)
