@@ -40,4 +40,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    address = address = models.TextField(null=False)
+    address = models.TextField(null=False)
