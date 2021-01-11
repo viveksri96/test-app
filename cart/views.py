@@ -68,37 +68,34 @@ class CartCheckout(APIView):
     def post(self, request, id):
         customer = request.user
 
-        try:
-            if(customer.is_anonymous):
-                phone = request.data.get('phone_number')
-                otp = request.data.get('otp')
+        if(customer.is_anonymous):
+            phone = request.data.get('phone_number')
+            otp = request.data.get('otp')
 
-                if(phone and otp):
-                    user = User.objects.create(phone_number=phone)
-                    customer = Customer.objects.create(user=user)
-                else:
-                    return Response('No user found please enter your mobile number and otp', status=status.HTTP_400_BAD_REQUEST)
+            if(phone and otp):
+                user = User.objects.create(phone_number=phone)
+                customer = Customer.objects.create(user=user)
+            else:
+                return Response('No user found please enter your mobile number and otp', status=status.HTTP_400_BAD_REQUEST)
 
-            # Check and save customer address
-            if(not customer.address):
-                address = request.data.get('address')
-                if(not address):
-                    return Response({"error": "Invalid adress"}, status=status.HTTP_400_BAD_REQUEST)
-                customer.address = address
-                customer.save()
+        # Check and save customer address
+        if(not customer.address):
+            address = request.data.get('address')
+            if(not address):
+                return Response({"error": "Invalid adress"}, status=status.HTTP_400_BAD_REQUEST)
+            customer.address = address
+            customer.save()
 
-            # Copies the cart data and creates a new Order and cart is deleted in the end.
-            cart = Cart.objects.get(id=id)
-            order = Order.objects.create(customer=customer, total=cart.total)
+        # Copies the cart data and creates a new Order and cart is deleted in the end.
+        cart = Cart.objects.get(id=id)
+        order = Order.objects.create(customer=customer, total=cart.total)
 
-            cart_items = CartItem.objects.filter(cart=cart)
-            for item in cart_items:
-                order_item = OrderItem.objects.create(
-                    order=order, product=item.product, total=item.total)
-                cart_items.delete()
+        cart_items = CartItem.objects.filter(cart=cart)
+        for item in cart_items:
+            order_item = OrderItem.objects.create(
+                order=order, product=item.product, total=item.total)
+            cart_items.delete()
 
-            cart.delete()
+        cart.delete()
 
-            return Response({"order_id": order.id}, status=status.HTTP_200_OK)
-        except:
-            return Response(None, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"order_id": order.id}, status=status.HTTP_200_OK)
