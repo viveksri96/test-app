@@ -66,17 +66,19 @@ class CartCheckout(APIView):
     authentication_classes = [TokenAuthentication]
 
     def post(self, request, id):
-        customer = request.user
+        user = request.user
 
-        if(customer.is_anonymous):
+        if(user.is_anonymous):
             phone = request.data.get('phone_number')
             otp = request.data.get('otp')
 
             if(phone and otp):
                 user = User.objects.create(phone_number=phone)
-                customer = Customer.objects.create(user=user)
+
             else:
                 return Response('No user found please enter your mobile number and otp', status=status.HTTP_400_BAD_REQUEST)
+
+        customer = Customer.objects.get_or_create(user=user)
 
         # Check and save customer address
         if(not customer.address):
