@@ -78,7 +78,7 @@ class CartCheckout(APIView):
             else:
                 return Response('No user found please enter your mobile number and otp', status=status.HTTP_400_BAD_REQUEST)
 
-        customer = Customer.objects.get_or_create(user=user)
+        customer, _ = Customer.objects.get_or_create(user=user)
 
         # Check and save customer address
         if(not customer.address):
