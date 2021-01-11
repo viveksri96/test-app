@@ -110,6 +110,6 @@ class ProductView(APIView):
         try:
             product = Product.objects.get(id=id)
             product.delete()
-            return Response("", status=status.HTTP_200_OK)
+            return Response(None, status=status.HTTP_200_OK)
         except Product.DoesNotExist:
             return Response("Product not Found", status=status.HTTP_404_NOT_FOUND)

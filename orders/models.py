@@ -1,12 +1,12 @@
 from django.db import models
 from store.models import Product
-from accounts.models import User
+from accounts.models import Customer
 
 # Create your models here.
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=False)
 
 
